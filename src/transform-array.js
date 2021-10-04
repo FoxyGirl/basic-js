@@ -18,38 +18,40 @@ export default function transform(arr) {
     throw new Error(`'arr' parameter must be an instance of the Array!`);
   }
 
+  const actions = ['--discard-next', '--discard-prev', '--double-next', '--double-prev'];
+
   const result = [];
 
-  let i = 0;
-  while (i < arr.length) {
+  for (let i = 0; i < arr.length; i++) {
     const el = arr[i];
-    if (!isNaN(el)) {
+    if (!actions.includes(el)) {
       result.push(el);
-      i += 1;
       continue;
     }
 
     if (el === '--discard-next') {
-      i += 2;
+      i++;
     }
 
-    if (el === '--discard-prev') {
+    if (el === '--discard-prev' && arr[i - 2] !== "--discard-next") {
       result.pop();
-      i += 2;
     }
 
     if (el === '--double-next') {
       let x = arr[i + 1];
-      result.push(x).push(x);
-      i += 2;
+      if (x) {
+        result.push(x)
+      }
     }
 
-    if (el === '--double-prev') {
-      let x = result.pop();
-      result.push(x).push(x);
-      i += 2;
+    if (el === '--double-prev' && arr[i - 2] !== "--discard-next") {
+      let x = arr[i - 1];
+      if (x) {
+        result.push(x)
+      }
     }
   }
+
   
   return result;
 }
